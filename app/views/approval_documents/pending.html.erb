@@ -1,0 +1,117 @@
+<% content_for :title, "Bekleyen Onaylar | OnayFlow" %>
+
+<header class="page-header">
+  <div>
+    <span class="eyebrow">Yönetici paneli</span>
+    <h1>Bekleyen onaylar</h1>
+    <p>Size atanan belgeleri son tarihlerine göre önceliklendirin.</p>
+  </div>
+  <span class="timezone-pill"><%= onayflow_time_zone_label %></span>
+</header>
+
+<section class="stat-grid stat-grid-three" aria-label="Onay özeti">
+  <article class="stat-card accent-blue">
+    <span class="stat-label">Bekleyen onaylar</span>
+    <strong><%= @document_counts[:pending] %></strong>
+    <span class="stat-caption">Kararınızı bekliyor</span>
+  </article>
+  <article class="stat-card accent-red">
+    <span class="stat-label">Gecikmiş onaylar</span>
+    <strong><%= @document_counts[:overdue] %></strong>
+    <span class="stat-caption">Son tarihi geçti</span>
+  </article>
+  <article class="stat-card accent-amber">
+    <span class="stat-label">Son 6 saat</span>
+    <strong><%= @document_counts[:urgent] %></strong>
+    <span class="stat-caption">Acil karar gerektiriyor</span>
+  </article>
+</section>
+
+<section class="panel priority-panel">
+  <div class="panel-header">
+    <div>
+      <span class="eyebrow">Sıradaki işlem</span>
+      <h2>Önceliklendirilmiş karar sırası</h2>
+      <p>Gecikmiş, acil ve normal belgeler kendi grubunda en yakın son tarihe göre sıralanır.</p>
+    </div>
+  </div>
+
+  <% if @next_actions.any? %>
+    <div class="table-scroll">
+      <table class="data-table priority-table">
+        <thead>
+          <tr>
+            <th>Öncelik</th>
+            <th>Belge</th>
+            <th>Talep eden</th>
+            <th>Son tarih</th>
+            <th>Kalan süre</th>
+            <th><span class="visually-hidden">İşlem</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @next_actions.each_with_index do |document, index| %>
+            <tr class="<%= "next-row" if index.zero? %>">
+              <td><span class="<%= next_action_class(document, at: @dashboard_time) %>"><%= next_action_label(document, at: @dashboard_time) %></span></td>
+              <td>
+                <%= link_to document.title, document, class: "document-link" %>
+                <% if index.zero? %><span class="table-subtext">Sıradaki karar</span><% end %>
+              </td>
+              <td><%= document.requester.name %></td>
+              <td><%= onayflow_datetime(document.due_at) %></td>
+              <td class="time-remaining"><%= due_time_label(document, at: @dashboard_time) %></td>
+              <td><%= link_to "İncele", document, class: "table-action" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="empty-state compact">
+      <span class="empty-icon success" aria-hidden="true">✓</span>
+      <h3>Bekleyen karar yok</h3>
+      <p>Size atanmış bütün belgeler şu anda sonuçlandırılmış durumda.</p>
+    </div>
+  <% end %>
+</section>
+
+<section class="panel">
+  <div class="panel-header">
+    <div>
+      <h2>Tüm atanmış belgeler</h2>
+      <p>Bekleyen ve sonuçlanan belgelerin güncel durumu.</p>
+    </div>
+  </div>
+
+  <% if @approval_documents.any? %>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Belge adı</th>
+            <th>Talep eden</th>
+            <th>Durum</th>
+            <th>Son karar zamanı</th>
+            <th><span class="visually-hidden">İşlem</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @approval_documents.each do |document| %>
+            <tr>
+              <td><%= link_to document.title, document, class: "document-link" %></td>
+              <td><%= document.requester.name %></td>
+              <td><span class="<%= approval_status_class(document) %>"><%= approval_status_label(document) %></span></td>
+              <td><%= onayflow_datetime(document.decided_at) %></td>
+              <td><%= link_to "Görüntüle", document, class: "table-action" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="empty-state compact">
+      <h3>Henüz atanmış belge yok</h3>
+      <p>Size atanan belgeler burada görüntülenecek.</p>
+    </div>
+  <% end %>
+</section>

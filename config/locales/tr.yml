@@ -1,0 +1,4 @@
+tr:
+  time:
+    formats:
+      onayflow: "%d.%m.%Y %H:%M"

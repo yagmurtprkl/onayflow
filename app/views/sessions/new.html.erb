@@ -1,0 +1,47 @@
+<% content_for :title, "Giriş | OnayFlow" %>
+
+<div class="auth-page">
+  <section class="auth-intro">
+    <%= render "shared/brand" %>
+    <div class="auth-copy">
+      <span class="eyebrow light">Kurumsal belge onayı</span>
+      <h1>Karar süreçleri tek bir akışta.</h1>
+      <p>Belgelerinizi güvenle gönderin, bekleyen kararları öncelik sırasıyla yönetin.</p>
+    </div>
+    <ul class="auth-benefits" aria-label="OnayFlow özellikleri">
+      <li><span>01</span> Açık durum takibi</li>
+      <li><span>02</span> Rol tabanlı güvenli erişim</li>
+      <li><span>03</span> Zaman odaklı onay sırası</li>
+    </ul>
+  </section>
+
+  <section class="auth-panel">
+    <div class="auth-card">
+      <span class="eyebrow">Hesabınıza erişin</span>
+      <h2>Tekrar hoş geldiniz</h2>
+      <p class="muted">OnayFlow çalışma alanınıza devam etmek için giriş yapın.</p>
+
+      <%= form_with url: login_path, class: "stacked-form" do |form| %>
+        <div class="form-group">
+          <%= form.label :email, "E-posta adresi" %>
+          <%= form.email_field :email,
+                               required: true,
+                               autofocus: true,
+                               autocomplete: "email",
+                               placeholder: "ornek@onayflow.test" %>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :password, "Şifre" %>
+          <%= form.password_field :password,
+                                  required: true,
+                                  autocomplete: "current-password",
+                                  placeholder: "Şifrenizi girin" %>
+        </div>
+
+        <%= form.submit "Giriş yap", class: "button primary-button full-width" %>
+      <% end %>
+      <p class="auth-security-note">Oturumunuz Rails session güvenliği ve CSRF korumasıyla yönetilir.</p>
+    </div>
+  </section>
+</div>

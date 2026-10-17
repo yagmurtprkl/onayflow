@@ -1,0 +1,19 @@
+<% content_for :title, "Yeni Belge | OnayFlow" %>
+
+<nav class="breadcrumbs" aria-label="Sayfa yolu">
+  <%= link_to "Belgelerim", approval_documents_path %>
+  <span aria-hidden="true">/</span>
+  <span>Yeni belge</span>
+</nav>
+
+<header class="page-header form-page-header">
+  <div>
+    <span class="eyebrow">Yeni taslak</span>
+    <h1>Yeni belge oluştur</h1>
+    <p>Belgenizi taslak olarak kaydedin; hazır olduğunda detay ekranından onaya gönderin.</p>
+  </div>
+</header>
+
+<section class="panel form-panel">
+  <%= render "form", approval_document: @approval_document %>
+</section>

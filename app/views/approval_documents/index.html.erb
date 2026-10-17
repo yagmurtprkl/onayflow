@@ -1,0 +1,82 @@
+<% content_for :title, "Belgelerim | OnayFlow" %>
+
+<header class="page-header">
+  <div>
+    <span class="eyebrow">Çalışan paneli</span>
+    <h1>Belgelerim</h1>
+    <p>Belgelerinizi oluşturun, onaya gönderin ve karar sürecini takip edin.</p>
+  </div>
+  <%= link_to new_approval_document_path, class: "button primary-button" do %>
+    <span aria-hidden="true">＋</span> Yeni belge oluştur
+  <% end %>
+</header>
+
+<section class="stat-grid stat-grid-four" aria-label="Belge özeti">
+  <article class="stat-card">
+    <span class="stat-label">Toplam belge</span>
+    <strong><%= @document_counts[:total] %></strong>
+    <span class="stat-caption">Tüm kayıtlarınız</span>
+  </article>
+  <article class="stat-card accent-blue">
+    <span class="stat-label">Onay bekleyen</span>
+    <strong><%= @document_counts[:pending] %></strong>
+    <span class="stat-caption">Yönetici kararı bekliyor</span>
+  </article>
+  <article class="stat-card accent-green">
+    <span class="stat-label">Onaylanan</span>
+    <strong><%= @document_counts[:approved] %></strong>
+    <span class="stat-caption">Olumlu sonuçlandı</span>
+  </article>
+  <article class="stat-card accent-red">
+    <span class="stat-label">Reddedilen</span>
+    <strong><%= @document_counts[:rejected] %></strong>
+    <span class="stat-caption">Gerekçesiyle sonuçlandı</span>
+  </article>
+</section>
+
+<section class="panel">
+  <div class="panel-header">
+    <div>
+      <h2>Belge listesi</h2>
+      <p>En yeni belgeler önce gösterilir.</p>
+    </div>
+    <span class="timezone-pill"><%= onayflow_time_zone_label %></span>
+  </div>
+
+  <% if @approval_documents.any? %>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Belge başlığı</th>
+            <th>Durum</th>
+            <th>Yönetici</th>
+            <th>Oluşturulma tarihi</th>
+            <th><span class="visually-hidden">İşlem</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @approval_documents.each do |document| %>
+            <tr>
+              <td>
+                <%= link_to document.title, document, class: "document-link" %>
+                <span class="table-subtext">Belge #<%= document.id %></span>
+              </td>
+              <td><span class="<%= approval_status_class(document) %>"><%= approval_status_label(document) %></span></td>
+              <td><%= document.approver.name %></td>
+              <td><%= onayflow_datetime(document.created_at) %></td>
+              <td><%= link_to "Görüntüle", document, class: "table-action" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <span class="empty-icon" aria-hidden="true">□</span>
+      <h3>Henüz belgeniz yok</h3>
+      <p>İlk belgenizi taslak olarak oluşturarak onay akışını başlatın.</p>
+      <%= link_to "İlk belgeyi oluştur", new_approval_document_path, class: "button primary-button" %>
+    </div>
+  <% end %>
+</section>

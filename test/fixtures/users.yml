@@ -1,0 +1,23 @@
+employee:
+  name: Test Çalışan
+  email: employee@example.test
+  password_digest: <%= BCrypt::Password.create("TestPassword123!") %>
+  role: employee
+
+other_employee:
+  name: Diğer Çalışan
+  email: other-employee@example.test
+  password_digest: <%= BCrypt::Password.create("TestPassword123!") %>
+  role: employee
+
+manager:
+  name: Test Yönetici
+  email: manager@example.test
+  password_digest: <%= BCrypt::Password.create("TestPassword123!") %>
+  role: manager
+
+other_manager:
+  name: Diğer Yönetici
+  email: other-manager@example.test
+  password_digest: <%= BCrypt::Password.create("TestPassword123!") %>
+  role: manager

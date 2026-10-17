@@ -1,0 +1,112 @@
+<% content_for :title, "#{@approval_document.title} | OnayFlow" %>
+
+<nav class="breadcrumbs" aria-label="Sayfa yolu">
+  <%= link_to(current_user.manager? ? "Onay paneli" : "Belgelerim",
+              current_user.manager? ? pending_approval_documents_path : approval_documents_path) %>
+  <span aria-hidden="true">/</span>
+  <span>Belge detayı</span>
+</nav>
+
+<header class="page-header document-page-header">
+  <div>
+    <span class="eyebrow">Belge #<%= @approval_document.id %></span>
+    <h1><%= @approval_document.title %></h1>
+    <div class="inline-badges">
+      <span class="<%= approval_status_class(@approval_document) %>"><%= approval_status_label(@approval_document) %></span>
+      <% if current_user.manager? && @approval_document.pending? %>
+        <span class="<%= next_action_class(@approval_document) %>"><%= next_action_label(@approval_document) %></span>
+        <span class="time-inline"><%= due_time_label(@approval_document) %></span>
+      <% end %>
+    </div>
+  </div>
+  <span class="timezone-pill"><%= onayflow_time_zone_label %></span>
+</header>
+
+<div class="document-layout">
+  <article class="panel document-card">
+    <div class="document-meta-grid">
+      <div>
+        <span class="meta-label">Talep eden</span>
+        <strong><%= @approval_document.requester.name %></strong>
+      </div>
+      <div>
+        <span class="meta-label">Onaylayan yönetici</span>
+        <strong><%= @approval_document.approver.name %></strong>
+      </div>
+      <div>
+        <span class="meta-label">Gönderilme zamanı</span>
+        <strong><%= onayflow_datetime(@approval_document.submitted_at) %></strong>
+      </div>
+      <div>
+        <span class="meta-label">Son tarih</span>
+        <strong><%= onayflow_datetime(@approval_document.due_at) %></strong>
+      </div>
+      <div>
+        <span class="meta-label">Karar zamanı</span>
+        <strong><%= onayflow_datetime(@approval_document.decided_at) %></strong>
+      </div>
+    </div>
+
+    <div class="document-section">
+      <h2>Belge içeriği</h2>
+      <div class="document-content"><%= @approval_document.content %></div>
+    </div>
+
+    <% if @approval_document.rejected? %>
+      <div class="decision-note rejection-note">
+        <span class="meta-label">Ret gerekçesi</span>
+        <p><%= @approval_document.rejection_reason %></p>
+      </div>
+    <% end %>
+  </article>
+
+  <aside class="decision-column">
+    <% if current_user.employee? && @approval_document.editable_by?(current_user) %>
+      <section class="panel action-card">
+        <span class="eyebrow">Taslak işlemleri</span>
+        <h2>Belgeyi tamamlayın</h2>
+        <p>Onaya gönderdikten sonra belge içeriği değiştirilemez.</p>
+        <div class="stacked-actions">
+          <%= link_to "Taslağı düzenle", edit_approval_document_path(@approval_document), class: "button secondary-button" %>
+          <%= button_to "Onaya gönder",
+                        submit_approval_document_path(@approval_document),
+                        method: :post,
+                        class: "button primary-button full-width",
+                        form: { data: { turbo_confirm: "Belgeyi onaya göndermek istiyor musunuz?" } } %>
+        </div>
+      </section>
+    <% end %>
+
+    <% if current_user.manager? && @approval_document.pending? %>
+      <section class="panel action-card">
+        <span class="eyebrow">Karar işlemi</span>
+        <h2>Belgeyi değerlendirin</h2>
+        <p>Onay veya ret kararı verildiğinde işlem geri alınamaz.</p>
+        <%= button_to "Belgeyi onayla",
+                      approve_approval_document_path(@approval_document),
+                      method: :post,
+                      class: "button success-button full-width",
+                      form: { data: { turbo_confirm: "Belgeyi onaylamak istiyor musunuz?" } } %>
+
+        <div class="decision-divider"><span>veya</span></div>
+
+        <%= form_with url: reject_approval_document_path(@approval_document), method: :post, class: "stacked-form" do |form| %>
+          <div class="form-group">
+            <%= form.label :rejection_reason, "Ret gerekçesi" %>
+            <%= form.text_area :rejection_reason,
+                               required: true,
+                               rows: 4,
+                               placeholder: "Kararın gerekçesini açıkça yazın" %>
+          </div>
+          <%= form.submit "Gerekçeyle reddet", class: "button danger-button full-width" %>
+        <% end %>
+      </section>
+    <% elsif !@approval_document.draft? %>
+      <section class="panel action-card completed-card">
+        <span class="eyebrow">Akış durumu</span>
+        <h2><%= @approval_document.pending? ? "Karar bekleniyor" : "İşlem tamamlandı" %></h2>
+        <p>Belgenin güncel durumu yukarıdaki bilgilerde gösterilmektedir.</p>
+      </section>
+    <% end %>
+  </aside>
+</div>

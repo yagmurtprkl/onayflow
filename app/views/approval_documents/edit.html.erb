@@ -1,0 +1,21 @@
+<% content_for :title, "Belgeyi Düzenle | OnayFlow" %>
+
+<nav class="breadcrumbs" aria-label="Sayfa yolu">
+  <%= link_to "Belgelerim", approval_documents_path %>
+  <span aria-hidden="true">/</span>
+  <%= link_to @approval_document.title, @approval_document %>
+  <span aria-hidden="true">/</span>
+  <span>Düzenle</span>
+</nav>
+
+<header class="page-header form-page-header">
+  <div>
+    <span class="eyebrow">Taslak belge</span>
+    <h1>Belgeyi düzenle</h1>
+    <p>Başlığı, içeriği veya onaylayacak yöneticiyi güncelleyin.</p>
+  </div>
+</header>
+
+<section class="panel form-panel">
+  <%= render "form", approval_document: @approval_document %>
+</section>

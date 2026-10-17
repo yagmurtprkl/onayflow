@@ -1,0 +1,22 @@
+employee_draft:
+  title: Satın alma talebi
+  content: Test içeriği
+  requester: employee
+  approver: manager
+  status: draft
+
+other_employee_draft:
+  title: Başka çalışanın belgesi
+  content: Gizli test içeriği
+  requester: other_employee
+  approver: other_manager
+  status: draft
+
+employee_pending:
+  title: Onay bekleyen belge
+  content: Yönetici kararı bekliyor
+  requester: employee
+  approver: manager
+  status: pending
+  submitted_at: 2026-10-17 10:00:00
+  due_at: 2026-10-19 10:00:00

@@ -1,0 +1,47 @@
+<%= form_with model: approval_document, class: "stacked-form document-form" do |form| %>
+  <% if approval_document.errors.any? %>
+    <div class="error-messages" role="alert">
+      <strong>Belge kaydedilemedi:</strong>
+      <ul>
+        <% approval_document.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= form.label :title, "Belge başlığı" %>
+    <span class="field-hint">Belgeyi listede kolayca tanımlayacak kısa bir başlık yazın.</span>
+    <%= form.text_field :title,
+                        required: true,
+                        maxlength: 200,
+                        placeholder: "Örn. 2026 yazılım lisansı talebi" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :content, "Belge içeriği" %>
+    <span class="field-hint">Yöneticinin karar vermesi için gerekli kapsamı ve ayrıntıları ekleyin.</span>
+    <%= form.text_area :content,
+                       required: true,
+                       rows: 12,
+                       placeholder: "Talebin amacı, kapsamı ve gerekli açıklamalar…" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :approver_id, "Onaylayacak yönetici" %>
+    <span class="field-hint">Belge yalnızca seçtiğiniz yönetici tarafından karara bağlanabilir.</span>
+    <%= form.collection_select :approver_id,
+                               @managers,
+                               :id,
+                               :name,
+                               { prompt: "Yönetici seçin" },
+                               { required: true } %>
+  </div>
+
+  <div class="form-actions">
+    <%= link_to "Vazgeç", approval_document.persisted? ? approval_document : approval_documents_path, class: "button secondary-button" %>
+    <%= form.submit approval_document.persisted? ? "Değişiklikleri kaydet" : "Taslak oluştur",
+                    class: "button primary-button" %>
+  </div>
+<% end %>
