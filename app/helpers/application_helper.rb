@@ -49,6 +49,10 @@ module ApplicationHelper
     user.manager? ? "Yönetici" : "Çalışan"
   end
 
+  def user_initials(user)
+    user.name.split.filter_map { |part| part.first&.upcase }.first(2).join
+  end
+
   private
 
   def onayflow_time_zone

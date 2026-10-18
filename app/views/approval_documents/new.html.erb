@@ -14,6 +14,26 @@
   </div>
 </header>
 
-<section class="panel form-panel">
-  <%= render "form", approval_document: @approval_document %>
-</section>
+<div class="form-layout">
+  <section class="panel form-panel">
+    <div class="form-panel-heading">
+      <span class="form-step">01</span>
+      <div>
+        <h2>Belge bilgileri</h2>
+        <p>Tüm alanları karar verecek yöneticinin ihtiyacı olan bilgilerle doldurun.</p>
+      </div>
+    </div>
+    <%= render "form", approval_document: @approval_document %>
+  </section>
+
+  <aside class="panel form-guidance">
+    <span class="guidance-icon" aria-hidden="true">✓</span>
+    <h2>Göndermeden önce</h2>
+    <ul>
+      <li>Başlığın talebi açıkça anlattığından emin olun.</li>
+      <li>Karar için gerekli ayrıntıları belge içeriğine ekleyin.</li>
+      <li>Doğru yöneticiyi seçin; belgeyi yalnızca o sonuçlandırabilir.</li>
+    </ul>
+    <p>Taslağı kaydettikten sonra detay ekranından onaya gönderebilirsiniz.</p>
+  </aside>
+</div>

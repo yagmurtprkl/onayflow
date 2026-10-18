@@ -5,6 +5,7 @@ class ApprovalWorkflowTest < ActionDispatch::IntegrationTest
     get login_path
     assert_response :success
     assert_select "form"
+    assert_select "input[type='email'][autofocus]", count: 0
 
     log_in_as(users(:employee))
     follow_redirect!
@@ -15,10 +16,12 @@ class ApprovalWorkflowTest < ActionDispatch::IntegrationTest
     get new_approval_document_path
     assert_response :success
     assert_select "form.document-form"
+    assert_select ".nav-item.active", text: /Yeni belge/
 
     get edit_approval_document_path(approval_documents(:employee_draft))
     assert_response :success
     assert_select "form.document-form"
+    assert_select ".nav-item.active", text: /Belgelerim/
 
     get approval_document_path(approval_documents(:employee_draft))
     assert_response :success
@@ -43,6 +46,16 @@ class ApprovalWorkflowTest < ActionDispatch::IntegrationTest
     assert_redirected_to approval_document_path(document)
     assert_equal employee, document.requester
     assert_predicate document, :draft?
+  end
+
+  test "authenticated user can log out" do
+    log_in_as(users(:employee))
+
+    delete logout_path
+
+    assert_redirected_to login_path
+    get approval_documents_path
+    assert_redirected_to login_path
   end
 
   test "employee submits own draft from controller" do
@@ -91,7 +104,13 @@ class ApprovalWorkflowTest < ActionDispatch::IntegrationTest
     follow_redirect!
 
     assert_response :success
-    assert_select "h1", "Bekleyen onaylar"
+    assert_select "h1", "Onay Paneli"
+    assert_select "title", "Onay Paneli | OnayFlow"
+
+    get approval_document_path(document)
+    assert_response :success
+    assert_select "form[action=?]", approve_approval_document_path(document)
+    assert_select "form[action=?]", reject_approval_document_path(document)
 
     post reject_approval_document_path(document), params: { rejection_reason: "Eksik bilgi var." }
 

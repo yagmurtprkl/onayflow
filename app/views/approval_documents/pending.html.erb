@@ -1,39 +1,49 @@
-<% content_for :title, "Bekleyen Onaylar | OnayFlow" %>
+<% content_for :title, "Onay Paneli | OnayFlow" %>
 
 <header class="page-header">
   <div>
     <span class="eyebrow">Yönetici paneli</span>
-    <h1>Bekleyen onaylar</h1>
-    <p>Size atanan belgeleri son tarihlerine göre önceliklendirin.</p>
+    <h1>Onay Paneli</h1>
+    <p>Size atanan belgeleri risk ve son karar zamanına göre tek bakışta yönetin.</p>
   </div>
   <span class="timezone-pill"><%= onayflow_time_zone_label %></span>
 </header>
 
 <section class="stat-grid stat-grid-three" aria-label="Onay özeti">
-  <article class="stat-card accent-blue">
-    <span class="stat-label">Bekleyen onaylar</span>
-    <strong><%= @document_counts[:pending] %></strong>
-    <span class="stat-caption">Kararınızı bekliyor</span>
+  <article class="stat-card">
+    <span class="stat-icon blue" aria-hidden="true">⌛</span>
+    <div class="stat-copy">
+      <span class="stat-label">Bekleyen onaylar</span>
+      <strong><%= @document_counts[:pending] %></strong>
+      <span class="stat-caption">Kararınızı bekliyor</span>
+    </div>
   </article>
-  <article class="stat-card accent-red">
-    <span class="stat-label">Gecikmiş onaylar</span>
-    <strong><%= @document_counts[:overdue] %></strong>
-    <span class="stat-caption">Son tarihi geçti</span>
+  <article class="stat-card">
+    <span class="stat-icon red" aria-hidden="true">!</span>
+    <div class="stat-copy">
+      <span class="stat-label">Gecikmiş onaylar</span>
+      <strong><%= @document_counts[:overdue] %></strong>
+      <span class="stat-caption">Son tarihi geçti</span>
+    </div>
   </article>
-  <article class="stat-card accent-amber">
-    <span class="stat-label">Son 6 saat</span>
-    <strong><%= @document_counts[:urgent] %></strong>
-    <span class="stat-caption">Acil karar gerektiriyor</span>
+  <article class="stat-card">
+    <span class="stat-icon amber" aria-hidden="true">⌛</span>
+    <div class="stat-copy">
+      <span class="stat-label">Son 6 saat</span>
+      <strong><%= @document_counts[:urgent] %></strong>
+      <span class="stat-caption">Acil karar gerektiriyor</span>
+    </div>
   </article>
 </section>
 
 <section class="panel priority-panel">
   <div class="panel-header">
     <div>
-      <span class="eyebrow">Sıradaki işlem</span>
-      <h2>Önceliklendirilmiş karar sırası</h2>
+      <span class="eyebrow"><span class="eyebrow-pulse" aria-hidden="true"></span> Sıradaki işlem</span>
+      <h2>Karar vermeniz gereken belgeler</h2>
       <p>Gecikmiş, acil ve normal belgeler kendi grubunda en yakın son tarihe göre sıralanır.</p>
     </div>
+    <span class="queue-count"><strong><%= @next_actions.size %></strong> aktif işlem</span>
   </div>
 
   <% if @next_actions.any? %>
@@ -44,23 +54,29 @@
             <th>Öncelik</th>
             <th>Belge</th>
             <th>Talep eden</th>
-            <th>Son tarih</th>
+            <th>Karar son tarihi</th>
             <th>Kalan süre</th>
             <th><span class="visually-hidden">İşlem</span></th>
           </tr>
         </thead>
         <tbody>
           <% @next_actions.each_with_index do |document, index| %>
-            <tr class="<%= "next-row" if index.zero? %>">
-              <td><span class="<%= next_action_class(document, at: @dashboard_time) %>"><%= next_action_label(document, at: @dashboard_time) %></span></td>
-              <td>
-                <%= link_to document.title, document, class: "document-link" %>
-                <% if index.zero? %><span class="table-subtext">Sıradaki karar</span><% end %>
+            <% priority = document.next_action_priority(at: @dashboard_time) %>
+            <tr class="priority-row priority-row-<%= priority %> <%= "next-row" if index.zero? %>">
+              <td data-label="Öncelik">
+                <span class="<%= next_action_class(document, at: @dashboard_time) %>">
+                  <span class="priority-symbol" aria-hidden="true"></span>
+                  <%= next_action_label(document, at: @dashboard_time) %>
+                </span>
               </td>
-              <td><%= document.requester.name %></td>
-              <td><%= onayflow_datetime(document.due_at) %></td>
-              <td class="time-remaining"><%= due_time_label(document, at: @dashboard_time) %></td>
-              <td><%= link_to "İncele", document, class: "table-action" %></td>
+              <td data-label="Belge">
+                <%= link_to document.title, document, class: "document-link" %>
+                <% if index.zero? %><span class="table-subtext next-action-note">Şimdi incelemeniz önerilir</span><% end %>
+              </td>
+              <td data-label="Talep eden"><%= document.requester.name %></td>
+              <td data-label="Son tarih"><%= onayflow_datetime(document.due_at) %></td>
+              <td data-label="Süre" class="time-remaining"><%= due_time_label(document, at: @dashboard_time) %></td>
+              <td class="table-action-cell"><%= link_to "İncele", document, class: "table-action table-action-primary" %></td>
             </tr>
           <% end %>
         </tbody>
@@ -75,7 +91,7 @@
   <% end %>
 </section>
 
-<section class="panel">
+<section class="panel table-panel">
   <div class="panel-header">
     <div>
       <h2>Tüm atanmış belgeler</h2>
@@ -98,11 +114,11 @@
         <tbody>
           <% @approval_documents.each do |document| %>
             <tr>
-              <td><%= link_to document.title, document, class: "document-link" %></td>
-              <td><%= document.requester.name %></td>
-              <td><span class="<%= approval_status_class(document) %>"><%= approval_status_label(document) %></span></td>
-              <td><%= onayflow_datetime(document.decided_at) %></td>
-              <td><%= link_to "Görüntüle", document, class: "table-action" %></td>
+              <td data-label="Belge"><%= link_to document.title, document, class: "document-link" %></td>
+              <td data-label="Talep eden"><%= document.requester.name %></td>
+              <td data-label="Durum"><span class="<%= approval_status_class(document) %>"><%= approval_status_label(document) %></span></td>
+              <td data-label="Son karar"><%= onayflow_datetime(document.decided_at) %></td>
+              <td class="table-action-cell"><%= link_to "Görüntüle", document, class: "table-action" %></td>
             </tr>
           <% end %>
         </tbody>

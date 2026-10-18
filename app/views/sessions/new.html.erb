@@ -2,46 +2,87 @@
 
 <div class="auth-page">
   <section class="auth-intro">
-    <%= render "shared/brand" %>
-    <div class="auth-copy">
-      <span class="eyebrow light">Kurumsal belge onayı</span>
-      <h1>Karar süreçleri tek bir akışta.</h1>
-      <p>Belgelerinizi güvenle gönderin, bekleyen kararları öncelik sırasıyla yönetin.</p>
+    <div class="auth-intro-header">
+      <%= render "shared/brand" %>
+      <span class="auth-trust-chip"><span aria-hidden="true"></span> Güvenli onay alanı</span>
     </div>
+
+    <div class="auth-showcase">
+      <div class="auth-copy">
+        <span class="eyebrow light">Kurumsal belge onayı</span>
+        <h1>Karar bekleyen işi, doğru anda görün.</h1>
+        <p>Belgeleri tek bir güvenli akışta oluşturun, önceliklendirin ve sonuçlandırın.</p>
+      </div>
+
+      <div class="workflow-preview" aria-label="OnayFlow akış ön izlemesi">
+        <div class="workflow-preview-header">
+          <div>
+            <span class="preview-kicker">Sıradaki işlem</span>
+            <strong>Öncelik merkezi</strong>
+          </div>
+          <span class="preview-live"><span aria-hidden="true"></span> Güncel</span>
+        </div>
+        <div class="preview-row is-overdue">
+          <span class="preview-icon" aria-hidden="true">!</span>
+          <span class="preview-copy"><strong>Gecikmiş karar</strong><small>Süre aşıldı</small></span>
+          <span class="preview-badge">Gecikmiş</span>
+        </div>
+        <div class="preview-row is-urgent">
+          <span class="preview-icon" aria-hidden="true">⌛</span>
+          <span class="preview-copy"><strong>Zaman kritik onay</strong><small>Son 6 saat</small></span>
+          <span class="preview-badge">Acil</span>
+        </div>
+        <div class="preview-row is-normal">
+          <span class="preview-icon" aria-hidden="true">→</span>
+          <span class="preview-copy"><strong>Planlı değerlendirme</strong><small>48 saatlik akış</small></span>
+          <span class="preview-badge">Normal</span>
+        </div>
+      </div>
+    </div>
+
     <ul class="auth-benefits" aria-label="OnayFlow özellikleri">
-      <li><span>01</span> Açık durum takibi</li>
-      <li><span>02</span> Rol tabanlı güvenli erişim</li>
-      <li><span>03</span> Zaman odaklı onay sırası</li>
+      <li><span aria-hidden="true">✓</span> Açık durum takibi</li>
+      <li><span aria-hidden="true">✓</span> Rol tabanlı erişim</li>
+      <li><span aria-hidden="true">✓</span> Zaman odaklı öncelik</li>
     </ul>
   </section>
 
   <section class="auth-panel">
     <div class="auth-card">
-      <span class="eyebrow">Hesabınıza erişin</span>
-      <h2>Tekrar hoş geldiniz</h2>
-      <p class="muted">OnayFlow çalışma alanınıza devam etmek için giriş yapın.</p>
+      <div class="auth-card-heading">
+        <span class="eyebrow">Hesabınıza erişin</span>
+        <h2>Tekrar hoş geldiniz</h2>
+        <p class="muted">OnayFlow çalışma alanınıza güvenli şekilde devam edin.</p>
+      </div>
 
       <%= form_with url: login_path, class: "stacked-form" do |form| %>
         <div class="form-group">
           <%= form.label :email, "E-posta adresi" %>
-          <%= form.email_field :email,
-                               required: true,
-                               autofocus: true,
-                               autocomplete: "email",
-                               placeholder: "ornek@onayflow.test" %>
+          <div class="input-shell">
+            <span class="input-icon" aria-hidden="true">@</span>
+            <%= form.email_field :email,
+                                 required: true,
+                                 autocomplete: "email",
+                                 placeholder: "ad.soyad@kurum.com" %>
+          </div>
         </div>
 
         <div class="form-group">
           <%= form.label :password, "Şifre" %>
-          <%= form.password_field :password,
-                                  required: true,
-                                  autocomplete: "current-password",
-                                  placeholder: "Şifrenizi girin" %>
+          <div class="input-shell">
+            <span class="input-icon" aria-hidden="true">••</span>
+            <%= form.password_field :password,
+                                    required: true,
+                                    autocomplete: "current-password",
+                                    placeholder: "Şifrenizi girin" %>
+          </div>
         </div>
 
-        <%= form.submit "Giriş yap", class: "button primary-button full-width" %>
+        <%= form.submit "Giriş yap",
+                        class: "button primary-button full-width",
+                        data: { turbo_submits_with: "Giriş yapılıyor…" } %>
       <% end %>
-      <p class="auth-security-note">Oturumunuz Rails session güvenliği ve CSRF korumasıyla yönetilir.</p>
+      <p class="auth-security-note"><span aria-hidden="true">●</span> Oturumunuz Rails session ve CSRF korumasıyla yönetilir.</p>
     </div>
   </section>
 </div>

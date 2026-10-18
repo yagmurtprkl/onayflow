@@ -10,7 +10,7 @@
     </div>
   <% end %>
 
-  <div class="form-group">
+  <div class="form-group form-group-featured">
     <%= form.label :title, "Belge başlığı" %>
     <span class="field-hint">Belgeyi listede kolayca tanımlayacak kısa bir başlık yazın.</span>
     <%= form.text_field :title,
@@ -42,6 +42,7 @@
   <div class="form-actions">
     <%= link_to "Vazgeç", approval_document.persisted? ? approval_document : approval_documents_path, class: "button secondary-button" %>
     <%= form.submit approval_document.persisted? ? "Değişiklikleri kaydet" : "Taslak oluştur",
-                    class: "button primary-button" %>
+                    class: "button primary-button",
+                    data: { turbo_submits_with: "Kaydediliyor…" } %>
   </div>
 <% end %>

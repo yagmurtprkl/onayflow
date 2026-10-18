@@ -7,48 +7,26 @@
   <span>Belge detayı</span>
 </nav>
 
-<header class="page-header document-page-header">
+<header class="page-header">
   <div>
     <span class="eyebrow">Belge #<%= @approval_document.id %></span>
     <h1><%= @approval_document.title %></h1>
-    <div class="inline-badges">
-      <span class="<%= approval_status_class(@approval_document) %>"><%= approval_status_label(@approval_document) %></span>
-      <% if current_user.manager? && @approval_document.pending? %>
-        <span class="<%= next_action_class(@approval_document) %>"><%= next_action_label(@approval_document) %></span>
-        <span class="time-inline"><%= due_time_label(@approval_document) %></span>
-      <% end %>
-    </div>
+    <p>Belgenin içeriğini ve karar sürecindeki güncel durumunu inceleyin.</p>
   </div>
   <span class="timezone-pill"><%= onayflow_time_zone_label %></span>
 </header>
 
 <div class="document-layout">
   <article class="panel document-card">
-    <div class="document-meta-grid">
+    <div class="document-card-header">
+      <span class="document-type-icon" aria-hidden="true">Aa</span>
       <div>
-        <span class="meta-label">Talep eden</span>
-        <strong><%= @approval_document.requester.name %></strong>
-      </div>
-      <div>
-        <span class="meta-label">Onaylayan yönetici</span>
-        <strong><%= @approval_document.approver.name %></strong>
-      </div>
-      <div>
-        <span class="meta-label">Gönderilme zamanı</span>
-        <strong><%= onayflow_datetime(@approval_document.submitted_at) %></strong>
-      </div>
-      <div>
-        <span class="meta-label">Son tarih</span>
-        <strong><%= onayflow_datetime(@approval_document.due_at) %></strong>
-      </div>
-      <div>
-        <span class="meta-label">Karar zamanı</span>
-        <strong><%= onayflow_datetime(@approval_document.decided_at) %></strong>
+        <span class="meta-label">Belge içeriği</span>
+        <h2>Talep ayrıntıları</h2>
       </div>
     </div>
 
     <div class="document-section">
-      <h2>Belge içeriği</h2>
       <div class="document-content"><%= @approval_document.content %></div>
     </div>
 
@@ -61,6 +39,49 @@
   </article>
 
   <aside class="decision-column">
+    <section class="panel summary-card">
+      <div class="summary-card-header">
+        <div>
+          <span class="meta-label">Güncel durum</span>
+          <div class="inline-badges">
+            <span class="<%= approval_status_class(@approval_document) %>"><%= approval_status_label(@approval_document) %></span>
+            <% if current_user.manager? && @approval_document.pending? %>
+              <span class="<%= next_action_class(@approval_document) %>">
+                <span class="priority-symbol" aria-hidden="true"></span>
+                <%= next_action_label(@approval_document) %>
+              </span>
+            <% end %>
+          </div>
+        </div>
+        <% if @approval_document.pending? %>
+          <strong class="summary-time"><%= due_time_label(@approval_document) %></strong>
+        <% end %>
+      </div>
+
+      <dl class="summary-list">
+        <div>
+          <dt>Talep eden</dt>
+          <dd><%= @approval_document.requester.name %></dd>
+        </div>
+        <div>
+          <dt>Onaylayan</dt>
+          <dd><%= @approval_document.approver.name %></dd>
+        </div>
+        <div>
+          <dt>Gönderilme</dt>
+          <dd><%= onayflow_datetime(@approval_document.submitted_at) %></dd>
+        </div>
+        <div>
+          <dt>Karar son tarihi</dt>
+          <dd><%= onayflow_datetime(@approval_document.due_at) %></dd>
+        </div>
+        <div>
+          <dt>Son karar</dt>
+          <dd><%= onayflow_datetime(@approval_document.decided_at) %></dd>
+        </div>
+      </dl>
+    </section>
+
     <% if current_user.employee? && @approval_document.editable_by?(current_user) %>
       <section class="panel action-card">
         <span class="eyebrow">Taslak işlemleri</span>
@@ -72,6 +93,7 @@
                         submit_approval_document_path(@approval_document),
                         method: :post,
                         class: "button primary-button full-width",
+                        data: { turbo_submits_with: "Gönderiliyor…" },
                         form: { data: { turbo_confirm: "Belgeyi onaya göndermek istiyor musunuz?" } } %>
         </div>
       </section>
@@ -86,6 +108,7 @@
                       approve_approval_document_path(@approval_document),
                       method: :post,
                       class: "button success-button full-width",
+                      data: { turbo_submits_with: "Onaylanıyor…" },
                       form: { data: { turbo_confirm: "Belgeyi onaylamak istiyor musunuz?" } } %>
 
         <div class="decision-divider"><span>veya</span></div>
@@ -98,7 +121,9 @@
                                rows: 4,
                                placeholder: "Kararın gerekçesini açıkça yazın" %>
           </div>
-          <%= form.submit "Gerekçeyle reddet", class: "button danger-button full-width" %>
+          <%= form.submit "Gerekçeyle reddet",
+                          class: "button danger-button full-width",
+                          data: { turbo_submits_with: "Reddediliyor…" } %>
         <% end %>
       </section>
     <% elsif !@approval_document.draft? %>

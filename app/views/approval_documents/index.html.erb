@@ -7,34 +7,46 @@
     <p>Belgelerinizi oluşturun, onaya gönderin ve karar sürecini takip edin.</p>
   </div>
   <%= link_to new_approval_document_path, class: "button primary-button" do %>
-    <span aria-hidden="true">＋</span> Yeni belge oluştur
+    <span class="button-icon" aria-hidden="true">＋</span> Yeni belge
   <% end %>
 </header>
 
 <section class="stat-grid stat-grid-four" aria-label="Belge özeti">
   <article class="stat-card">
-    <span class="stat-label">Toplam belge</span>
-    <strong><%= @document_counts[:total] %></strong>
-    <span class="stat-caption">Tüm kayıtlarınız</span>
+    <span class="stat-icon" aria-hidden="true">▦</span>
+    <div class="stat-copy">
+      <span class="stat-label">Toplam belge</span>
+      <strong><%= @document_counts[:total] %></strong>
+      <span class="stat-caption">Tüm kayıtlarınız</span>
+    </div>
   </article>
-  <article class="stat-card accent-blue">
-    <span class="stat-label">Onay bekleyen</span>
-    <strong><%= @document_counts[:pending] %></strong>
-    <span class="stat-caption">Yönetici kararı bekliyor</span>
+  <article class="stat-card">
+    <span class="stat-icon blue" aria-hidden="true">⌛</span>
+    <div class="stat-copy">
+      <span class="stat-label">Onay bekleyen</span>
+      <strong><%= @document_counts[:pending] %></strong>
+      <span class="stat-caption">Yönetici kararı bekliyor</span>
+    </div>
   </article>
-  <article class="stat-card accent-green">
-    <span class="stat-label">Onaylanan</span>
-    <strong><%= @document_counts[:approved] %></strong>
-    <span class="stat-caption">Olumlu sonuçlandı</span>
+  <article class="stat-card">
+    <span class="stat-icon green" aria-hidden="true">✓</span>
+    <div class="stat-copy">
+      <span class="stat-label">Onaylanan</span>
+      <strong><%= @document_counts[:approved] %></strong>
+      <span class="stat-caption">Olumlu sonuçlandı</span>
+    </div>
   </article>
-  <article class="stat-card accent-red">
-    <span class="stat-label">Reddedilen</span>
-    <strong><%= @document_counts[:rejected] %></strong>
-    <span class="stat-caption">Gerekçesiyle sonuçlandı</span>
+  <article class="stat-card">
+    <span class="stat-icon red" aria-hidden="true">×</span>
+    <div class="stat-copy">
+      <span class="stat-label">Reddedilen</span>
+      <strong><%= @document_counts[:rejected] %></strong>
+      <span class="stat-caption">Gerekçesiyle sonuçlandı</span>
+    </div>
   </article>
 </section>
 
-<section class="panel">
+<section class="panel table-panel">
   <div class="panel-header">
     <div>
       <h2>Belge listesi</h2>
@@ -58,14 +70,14 @@
         <tbody>
           <% @approval_documents.each do |document| %>
             <tr>
-              <td>
+              <td data-label="Belge">
                 <%= link_to document.title, document, class: "document-link" %>
                 <span class="table-subtext">Belge #<%= document.id %></span>
               </td>
-              <td><span class="<%= approval_status_class(document) %>"><%= approval_status_label(document) %></span></td>
-              <td><%= document.approver.name %></td>
-              <td><%= onayflow_datetime(document.created_at) %></td>
-              <td><%= link_to "Görüntüle", document, class: "table-action" %></td>
+              <td data-label="Durum"><span class="<%= approval_status_class(document) %>"><%= approval_status_label(document) %></span></td>
+              <td data-label="Yönetici"><%= document.approver.name %></td>
+              <td data-label="Oluşturulma"><%= onayflow_datetime(document.created_at) %></td>
+              <td class="table-action-cell"><%= link_to "Görüntüle", document, class: "table-action" %></td>
             </tr>
           <% end %>
         </tbody>
@@ -73,7 +85,7 @@
     </div>
   <% else %>
     <div class="empty-state">
-      <span class="empty-icon" aria-hidden="true">□</span>
+      <span class="empty-icon" aria-hidden="true">＋</span>
       <h3>Henüz belgeniz yok</h3>
       <p>İlk belgenizi taslak olarak oluşturarak onay akışını başlatın.</p>
       <%= link_to "İlk belgeyi oluştur", new_approval_document_path, class: "button primary-button" %>
