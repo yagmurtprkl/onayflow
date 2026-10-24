@@ -3,7 +3,7 @@
 ## Başlangıç noktası
 
 - Klonlanan ürün: Docusign'ın küçük bir iç belge onay akışı; elektronik imza ürünü değil.
-- Canlı URL: https://onayflow.onrender.com (ikinci aşama deploy/gerçek LLM demosu henüz doğrulanmadı).
+- Canlı URL: https://onayflow.onrender.com (24 Ekim 2026: kullanıcı eşliğinde canlı LLM ve onay akışı denendi; kanıtlar aşağıda).
 - Repo: https://github.com/yagmurtprkl/onayflow
 - Geçen haftanın son commit'i: [5aa6a34](https://github.com/yagmurtprkl/onayflow/commit/5aa6a34021b10b3ef7cd04f72fac13da0a995aba).
 - Başlangıçta çalışan özellikler: oturum, çalışan/yönetici rolleri, taslak, gönderim,
@@ -44,12 +44,13 @@ gönderme işlemlerini yapar. İnsan, kurum içi onayın karar sahibidir.
 
 Fark cümlesi: “Benim projemde agent, doğal dille gelen talebi eksiklerini sorarak
 gerçek bir onay kaydına dönüştürüyor ve belirsizlikte insana devrediyor.”
-Bu cümle kod ve kontrollü testlerle desteklenmiştir; gerçek LLM canlı kanıtı bekliyor.
+Bu cümle kod, kontrollü testler ve aşağıda ayrıştırılmış canlı demo kanıtlarıyla desteklenmiştir.
 Arkadaş projesiyle yan yana slop testi henüz yapılmadı; bunu yapılmış saymıyorum.
 
 ## Yapılanlar ve kanıt
 
 - [Uygulama ve test commit'i: 9baa64f](https://github.com/yagmurtprkl/onayflow/commit/9baa64fe740de56cde309018a0b8510447c7f667)
+- [Canlı bağlantı için model düzeltmesi: 6eb186f](https://github.com/yagmurtprkl/onayflow/commit/6eb186f)
 - [Başlangıçtan itibaren commit geçmişi](https://github.com/yagmurtprkl/onayflow/commits/main/)
 - AgentRequest modeli konuşmayı, durumunu, seçilen yöneticiyi ve oluşturulan belgeyi saklıyor.
 - Agent::LlmClient, Groq HTTPS chat completions ve JSON object modu kullanıyor;
@@ -83,10 +84,73 @@ Canlı demo adımları: [docs/STAGE2_DEMO.md](docs/STAGE2_DEMO.md).
 Sıra: canlı URL → eksik bilgiyi tamamlatıp belge oluşturma → yönetici kararı →
 konuşmada sonucu gösterme → insan devri → CHALLENGE_LOG.md → commit geçmişi.
 
+### İlk canlı deneme sonrası model düzeltmesi — 24 Ekim 2026
+
+Kullanıcının paylaştığı canlı ekranlarda istek kaydedildi ve atanmış yöneticiye
+göründü; sağlayıcı hatası/geçersiz yanıt nedeniyle insan devri gerçekleşti.
+Bu ilk başarısız deneme, başarılı LLM yanıtı değildir. Render ortamı ve sağlayıcı hata kaydı okunmadığı
+için kesin HTTP hata kodu bilinmiyor.
+
+Kod incelemesinde varsayılan llama-3.3-70b-versatile modelinin Groq Free/Developer
+katmanlarında 16 Ağustos 2026'da kaldırıldığı doğrulandı. Varsayılan model,
+desteklenen openai/gpt-oss-120b olarak değiştirildi. Akıl yürütme ve JSON yanıtı
+için çıktı token bütçesi 4096'ya çıkarıldı. GROQ_MODEL ortam değişkeni varsa hâlâ
+önceliklidir; Render'da eski modele ayarlıysa güncellenmelidir.
+
+- [Groq model kullanım sonları](https://console.groq.com/docs/deprecations)
+- [Desteklenen modeller](https://console.groq.com/docs/models)
+- Düzeltme sonrası kullanıcı yeni canlı taleplerle tekrar denedi; sonuçlar aşağıda.
+- İlk #1 konuşması hata kaynaklı insan devri olarak kaldı; başarılı demo diye sayılmadı.
+
+### Canlı demo sonuçları — 24 Ekim 2026
+
+Ortam: https://onayflow.onrender.com. Son değerlendirme modeli kullanıcı ekranında
+`openai/gpt-oss-120b` olarak görünüyor. Kullanıcı Groq anahtarını Render'da kendisi
+tanımladı; anahtar bu sohbete veya depoya alınmadı.
+
+Kanıt türü: kullanıcı uygulamayı kullandı; asistan paylaşılan ekran görüntülerini
+inceleyip adımları yönlendirdi. Üretim veritabanı/sağlayıcı kayıtları okunmadı.
+[Görsel kanıt dizini ve kapsamı](docs/evidence/2026-10-24/README.md).
+
+#### A. Eksik bilgiden yönetici kararına
+
+1. Çalışan, iki 27 inç monitörün amacını anlattı; tutar ve tarih vermedi.
+2. **Agent konuşması #2** toplam tutarı, para birimini ve ihtiyaç tarihini sordu.
+   [Ekran görüntüsü](docs/evidence/2026-10-24/01-agent-missing-information.png).
+3. Çalışan toplam bütçeyi KDV dahil 20.000 TRY ve ihtiyaç tarihini 2026-11-10 olarak tamamladı.
+4. Agent, **Belge #4 / 27 inç Monitör Alımı** kaydını oluşturup seçilen yöneticiye gönderdi.
+   [Yönetici belge ekranı](docs/evidence/2026-10-24/02-generated-document-pending.png).
+5. Belge ekranında tutar ve tarih doğru göründü. “Planlı bir alım; acil değil” ifadesine
+   karşılık agent normal değerlendirmesi ve gerekçesi üretti. Bu tek örnek, anlamın
+   dikkate alındığı bir canlı gözlemdir; tüm ifadelerde doğruluk garantisi değildir.
+6. Gönderim 24.10.2026 23:06, karar son tarihi 26.10.2026 23:06 olarak göründü:
+   mevcut 48 saatlik kural korundu. İhtiyaç tarihi ve karar son tarihi ayrı alanlardır.
+7. Yönetici onay verdi; çalışanın belge listesinde Belge #4 **Onaylandı** göründü.
+   [Çalışan ekranı](docs/evidence/2026-10-24/03-employee-approved-document.png).
+8. Kullanıcı, Talep #2 konuşmasında da **Onaylandı** gördüğünü açıkça bildirdi.
+   Bu son konuşma ekranı ayrıca paylaşılmadı; kullanıcı teyidi olarak kaydedildi.
+
+#### B. Bütçe çelişkisi → insan devri → devam
+
+1. Çalışan 20.000 TRY ve 30.000 TRY şeklinde iki çelişkili bütçe bildirdi ve yöneticinin
+   incelemesini istedi.
+2. **Agent konuşması #3** “İnsan incelemesine devredildi” durumuna geçti.
+   Agent bütçedeki çelişkiyi açıkladı; ekran henüz onaya gönderilmiş belge olmadığını belirtti.
+   [İnsan devri ekranı](docs/evidence/2026-10-24/04-budget-conflict-handoff.png).
+3. Yöneticiyle devralma, bütçeyi 20.000 TRY olarak netleştiren açıklamayı çalışana
+   geri iletme ve çalışanın iki monitör/2026-11-10 bilgilerini tamamlaması yönlendirildi.
+4. Kullanıcı bu akışın sağlandığını ve sonucun **Onaylandı** göründüğünü bildirdi.
+   Devir başlangıcı görselle, devam/son karar kullanıcı teyidiyle desteklenir; aradaki
+   yönetici notu ve son belge ekranı ayrıca paylaşılmadı. Son belge ID'si varsayılmadı.
+
+Sunumda bu iki senaryo canlı tekrar edilebilir; eski demo kayıtlarının yeni ortamda
+aynı ID'leri alacağı varsayılmamalı. İnsana devir örneği hem çelişki hem açık insan
+isteği içerdiğinden, açık insan isteği olmadan çelişki tespitini ayrıca kanıtlamaz.
+
 Vaat edilip henüz kanıtlanmayanlar / sınırlar:
 
-- Kullanıcı API bağlantısını sonraya bıraktı. Gerçek Groq çağrısı, anlamsal bağlam
-  testleri ve Render üzerinde ikinci aşamanın uçtan uca demosu **yapılmadı**.
+- Gerçek LLM akışı ve “acil değil” bağlam örneği yukarıdaki canlı kayıtlarla destekleniyor.
+  Kapsamlı anlamsal doğruluk, yük ve tüm sağlayıcı hata türleri canlıda sınanmadı.
 - Anahtar yokken sistem insan devrini gösterir. Bu davranış başarılı LLM demosu değildir.
 - Otomatik testler canlı demodaki gerçek model davranışının yerine geçmez.
 - RAG, harici agent istemcilerine bearer-token API, çoklu agent, PDF/dosya işleme yok.
@@ -97,19 +161,23 @@ Vaat edilip henüz kanıtlanmayanlar / sınırlar:
   konuşma açmak veya ilk oluşturma isteğini ayrı POST'larla tekrarlamak için global
   idempotency anahtarı bu sürümde yoktur.
 - Çağrılar eşzamanlıdır; yüksek trafik için ayrı iş kuyruğu ve oran sınırlaması gerekir.
-- 85/100 veya 100/100 alındığı iddia edilmiyor. Özellikle 100 koşulu gerçek LLM ve
-  canlı demo kanıtı eklenince değerlendirilebilir.
+- Agent-first ve LLM canlı demo kanıtları eklendi. Nihai not öğretim elemanının
+  değerlendirmesine bağlıdır; 85/100 veya 100/100 alındığı iddia edilmiyor.
 
 ## Zaman
 
-- İnsan zamanı: kullanıcı planı değerlendirdi, uygulamayı onayladı ve API bağlantısını
-  sonraya bırakmayı seçti. Kullanıcının harcadığı dakika ölçülmedi; sayı uydurulmadı.
+- İnsan zamanı: kullanıcı planı değerlendirdi, uygulamayı onayladı, ardından Groq/Render
+  ayarlarını yaptı ve çalışan/yönetici hesaplarıyla iki canlı akışı denedi. Kullanıcının
+  harcadığı dakika ölçülmedi; sayı uydurulmadı.
 - Agent zamanı: ilk proje yazma işlemi 24.10.2026 20:39 UTC+03:00'da gözlendi.
-  Bu günlük kaydı 24.10.2026 20:50 UTC+03:00 itibarıyla hazırlanmıştır. Aradaki süre araç/izin
+  İlk kodlama günlüğü 24.10.2026 20:50 UTC+03:00 itibarıyla hazırlanmıştı. Aradaki süre araç/izin
   beklemelerini içerir; saf üretim süresi veya token maliyeti değildir.
 - İlk aşamanın ve bu haftanın planlama süresi bu uygulama aralığına dahil değildir.
-- Token tüketimi / abonelik payı ölçülmedi. Gerçek sağlayıcı çağrısı yapılmadığı için
-  bu çalışmada Groq API kullanımı gerçekleşmedi; toplam agent maliyeti bilinmiyor.
+- İlk kodlama kaydındaki 20:39–20:50 aralığı, sonraki model düzeltmesi, kurulum ve
+  canlı denemeler dahil projenin toplam süresi değildir. Canlı Belge #4'teki 23:06
+  damgası bir olay zamanıdır; kesintisiz çalışma süresi olarak kullanılmadı.
+- Canlı denemelerde Groq API kullanıldı. Gerçek token tüketimi, faturalama ekranı ve
+  abonelik payı ölçülmedi/okunmadı; toplam maliyet veya kesin 0 USD iddiası yapılmıyor.
 
 İlk uygulama prompt'u (kullanıcının onay mesajı, olduğu gibi):
 
@@ -129,23 +197,3 @@ ve agent ile hazırlatıp tamamlama süresi, eksik bilgi ve yeniden işlemeyi ö
 
 Bu, başka bir öğrencinin sözleşme yaşam döngüsü hedefini üstlenme kararı değildir.
 Listede olmayanlar için madde 3 yönünü seçip gerekçelendirme kuralına göre ilerledim.
-
-
-### İlk canlı deneme sonrası model düzeltmesi — 24 Ekim 2026
-
-Kullanıcının paylaştığı canlı ekranlarda istek kaydedildi ve atanmış yöneticiye
-göründü; sağlayıcı hatası/geçersiz yanıt nedeniyle insan devri gerçekleşti.
-Bu, başarılı LLM yanıtı değildir. Render ortamı ve sağlayıcı hata kaydı okunmadığı
-için kesin HTTP hata kodu bilinmiyor.
-
-Kod incelemesinde varsayılan llama-3.3-70b-versatile modelinin Groq Free/Developer
-katmanlarında 16 Ağustos 2026'da kaldırıldığı doğrulandı. Varsayılan model,
-desteklenen openai/gpt-oss-120b olarak değiştirildi. Akıl yürütme ve JSON yanıtı
-için çıktı token bütçesi 4096'ya çıkarıldı. GROQ_MODEL ortam değişkeni varsa hâlâ
-önceliklidir; Render'da eski modele ayarlıysa güncellenmelidir.
-
-- [Groq model kullanım sonları](https://console.groq.com/docs/deprecations)
-- [Desteklenen modeller](https://console.groq.com/docs/models)
-- Yeni sürüm deploy edildikten sonra çalışan hesabıyla yeni agent talebi denenmeli.
-  Eski #1 konuşması yönetici incelemesinde kalır; otomatik olarak yeniden çalışmaz.
-- Gerçek LLM başarı kanıtı yeni denemeden sonra eklenecektir.

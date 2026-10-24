@@ -362,7 +362,10 @@ Onay/ret durumu konuşma ekranında doğrudan veritabanından gösterilir.
 
 Gerekli secret: `GROQ_API_KEY`. İsteğe bağlı: `GROQ_MODEL` (varsayılan
 `openai/gpt-oss-120b`). Anahtar yoksa LLM başarılıymış gibi gösterilmez;
-talep insan incelemesine devredilir. Gerçek sağlayıcı/canlı demo henüz yapılmamıştır.
+talep insan incelemesine devredilir. 24 Ekim 2026'da gerçek LLM ile eksik bilgi
+tamamlama, belge oluşturma ve yönetici onayı canlıda denendi. Bütçe çelişkisinde
+insan devri görselle; devrin ardından tamamlanıp onaylanması kullanıcı teyidiyle
+kaydedildi. Kanıtların kapsamı ve sınırları CHALLENGE_LOG.md içindedir.
 
 - [İkinci aşama günlüğü](CHALLENGE_LOG.md)
 - [Kurulum ve sunum senaryosu](docs/STAGE2_DEMO.md)

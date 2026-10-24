@@ -1,5 +1,20 @@
 # İkinci aşama: kurulum ve canlı demo
 
+## Son canlı doğrulama — 24 Ekim 2026
+
+Kullanıcı eşliğinde Render'da iki akış denendi:
+
+- Talep #2: LLM eksik tutar/tarih sorusunu sordu, 20.000 TRY ve 2026-11-10
+  bilgileriyle Belge #4'ü oluşturup gönderdi. Yönetici onayı çalışan belge ekranında
+  görüldü; konuşmadaki Onaylandı sonucu kullanıcı tarafından ayrıca teyit edildi.
+- Talep #3: Çelişkili bütçe ve açık insan isteği üzerine belge oluşturulmadan
+  yöneticiye devir görselle doğrulandı. Yönetici açıklaması sonrası devam ve son
+  onay kullanıcı tarafından teyit edildi; bu son adımların ayrı ekranı paylaşılmadı.
+
+[Ekran görüntüleri ve kanıt sınırları](evidence/2026-10-24/README.md).
+Yeni sunumda farklı kayıt ID'leri oluşabilir. Tarih örneklerini sunum günü geçmişte
+kalmayacak şekilde güncelleyin. Aşağıdaki yönerge canlı tekrar içindir.
+
 ## Kurulum
 
 Mevcut Ruby/Bundler kurulumuyla `ruby bin/rails db:prepare` çalıştırın.
@@ -52,7 +67,7 @@ bin/render-build.sh üzerinden coding agent'ın dağıtım kurallarını nasıl 
 ## Dürüst tamamlanma ölçütü
 
 API anahtarı olmadan geçen testler yalnız uygulama davranışını kanıtlar.
-Gerçek LLM ve Render demo adımları uygulanmadan 100 puanlık canlı kanıt tamamlanmış değildir.
+Yukarıdaki manuel canlı kanıtlar otomatik testlerden ayrıdır; nihai notu öğretim elemanı belirler.
 Harici agent istemcileri için bearer-token API, RAG ve çoklu agent bu sürümde yoktur.
 Agent sunucu içinde araç işlevi çağırır; kullanıcı arayüzündeki konuşmayı satın alma talebine dönüştürür.
 Yönetici kararı doğal dil komutuyla verilmez; mevcut güvenli onay ekranında verilir.
