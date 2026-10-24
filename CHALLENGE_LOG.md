@@ -129,3 +129,23 @@ ve agent ile hazırlatıp tamamlama süresi, eksik bilgi ve yeniden işlemeyi ö
 
 Bu, başka bir öğrencinin sözleşme yaşam döngüsü hedefini üstlenme kararı değildir.
 Listede olmayanlar için madde 3 yönünü seçip gerekçelendirme kuralına göre ilerledim.
+
+
+### İlk canlı deneme sonrası model düzeltmesi — 24 Ekim 2026
+
+Kullanıcının paylaştığı canlı ekranlarda istek kaydedildi ve atanmış yöneticiye
+göründü; sağlayıcı hatası/geçersiz yanıt nedeniyle insan devri gerçekleşti.
+Bu, başarılı LLM yanıtı değildir. Render ortamı ve sağlayıcı hata kaydı okunmadığı
+için kesin HTTP hata kodu bilinmiyor.
+
+Kod incelemesinde varsayılan llama-3.3-70b-versatile modelinin Groq Free/Developer
+katmanlarında 16 Ağustos 2026'da kaldırıldığı doğrulandı. Varsayılan model,
+desteklenen openai/gpt-oss-120b olarak değiştirildi. Akıl yürütme ve JSON yanıtı
+için çıktı token bütçesi 4096'ya çıkarıldı. GROQ_MODEL ortam değişkeni varsa hâlâ
+önceliklidir; Render'da eski modele ayarlıysa güncellenmelidir.
+
+- [Groq model kullanım sonları](https://console.groq.com/docs/deprecations)
+- [Desteklenen modeller](https://console.groq.com/docs/models)
+- Yeni sürüm deploy edildikten sonra çalışan hesabıyla yeni agent talebi denenmeli.
+  Eski #1 konuşması yönetici incelemesinde kalır; otomatik olarak yeniden çalışmaz.
+- Gerçek LLM başarı kanıtı yeni denemeden sonra eklenecektir.

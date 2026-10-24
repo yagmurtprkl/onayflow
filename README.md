@@ -361,7 +361,7 @@ insan talebi veya servis hatası yöneticinin devralabildiği bir konuşma oluş
 Onay/ret durumu konuşma ekranında doğrudan veritabanından gösterilir.
 
 Gerekli secret: `GROQ_API_KEY`. İsteğe bağlı: `GROQ_MODEL` (varsayılan
-`llama-3.3-70b-versatile`). Anahtar yoksa LLM başarılıymış gibi gösterilmez;
+`openai/gpt-oss-120b`). Anahtar yoksa LLM başarılıymış gibi gösterilmez;
 talep insan incelemesine devredilir. Gerçek sağlayıcı/canlı demo henüz yapılmamıştır.
 
 - [İkinci aşama günlüğü](CHALLENGE_LOG.md)

@@ -29,7 +29,7 @@ module Agent
     end
 
     def model
-      ENV.fetch("GROQ_MODEL", "llama-3.3-70b-versatile")
+      ENV.fetch("GROQ_MODEL", "openai/gpt-oss-120b")
     end
 
     def call(messages)
@@ -40,7 +40,7 @@ module Agent
       request["Authorization"] = "Bearer #{key}"
       request["Content-Type"] = "application/json"
       request.body = {
-        model: model, temperature: 0, max_completion_tokens: 1200,
+        model: model, temperature: 0, max_completion_tokens: 4096,
         response_format: { type: "json_object" },
         messages: [ { role: "system", content: SYSTEM_PROMPT + "\nBugün: #{Date.current.iso8601}" },
                     { role: "user", content: JSON.generate(messages) } ]

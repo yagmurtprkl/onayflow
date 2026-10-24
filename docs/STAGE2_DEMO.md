@@ -5,7 +5,7 @@
 Mevcut Ruby/Bundler kurulumuyla `ruby bin/rails db:prepare` çalıştırın.
 LLM bağlantısı için PowerShell oturumunda `GROQ_API_KEY` ortam değişkenini güvenli
 biçimde tanımlayın. Anahtarı sohbete, kaynak koda veya Git'e yazmayın.
-Varsayılan model `llama-3.3-70b-versatile`; gerekirse `GROQ_MODEL` ile değiştirin.
+Varsayılan model `openai/gpt-oss-120b`; gerekirse `GROQ_MODEL` ile değiştirin.
 Modelin Groq chat completions ve JSON object modunu desteklemesi gerekir.
 Ortam değişkenleri tanımlandıktan sonra Rails sunucusunu yeniden başlatın.
 
