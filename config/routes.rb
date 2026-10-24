@@ -1,6 +1,13 @@
 Rails.application.routes.draw do
   root "approval_documents#index"
 
+  resources :agent_requests, only: %i[index new create show] do
+    member do
+      post :message
+      post :resume
+    end
+  end
+
   get "login", to: "sessions#new", as: :login
   post "login", to: "sessions#create"
   delete "logout", to: "sessions#destroy", as: :logout

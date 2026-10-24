@@ -10,7 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_17_173000) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_24_180000) do
+  create_table "agent_requests", force: :cascade do |t|
+    t.integer "requester_id", null: false
+    t.integer "approver_id", null: false
+    t.integer "approval_document_id"
+    t.string "state", default: "collecting", null: false
+    t.json "messages", default: [], null: false
+    t.json "assessment", default: {}, null: false
+    t.string "llm_model"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["approval_document_id"], name: "index_agent_requests_on_approval_document_id", unique: true
+    t.index ["approver_id"], name: "index_agent_requests_on_approver_id"
+    t.index ["requester_id"], name: "index_agent_requests_on_requester_id"
+    t.check_constraint "state IN ('collecting', 'submitted', 'handoff')", name: "agent_requests_state_check"
+  end
+
   create_table "approval_documents", force: :cascade do |t|
     t.string "title", null: false
     t.text "content", null: false
@@ -44,6 +60,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_17_173000) do
     t.check_constraint "role IN ('employee', 'manager')", name: "users_role_check"
   end
 
+  add_foreign_key "agent_requests", "approval_documents"
+  add_foreign_key "agent_requests", "users", column: "approver_id"
+  add_foreign_key "agent_requests", "users", column: "requester_id"
   add_foreign_key "approval_documents", "users", column: "approver_id"
   add_foreign_key "approval_documents", "users", column: "requester_id"
 end

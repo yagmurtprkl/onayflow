@@ -33,6 +33,7 @@
 
           <nav class="primary-nav" aria-label="Ana menü">
             <span class="nav-section-label">Çalışma alanı</span>
+            <%= link_to "Agent talepleri", agent_requests_path, class: ["nav-item", { active: controller_name == "agent_requests" }] %>
             <% if current_user.employee? %>
               <%= link_to approval_documents_path,
                           class: ["nav-item", { active: controller_name == "approval_documents" && !%w[new create].include?(action_name) }] do %>

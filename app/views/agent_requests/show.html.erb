@@ -1,0 +1,30 @@
+<% content_for :title, "Agent talebi ##{@agent_request.id} | OnayFlow" %>
+<header class="page-header"><div><span class="eyebrow">Satın alma talebi</span><h1>Agent konuşması #<%= @agent_request.id %></h1>
+<p><%= @agent_request.requester.name %> → <%= @agent_request.approver.name %></p></div><%= link_to "Tüm talepler", agent_requests_path, class: "button secondary-button" %></header>
+<% if @agent_request.submitted? %>
+  <section class="panel agent-request-card" role="status"><h2>Talep onaya gönderildi</h2>
+  <p>Güncel karar: <strong><%= { "pending" => "Onay bekliyor", "approved" => "Onaylandı", "rejected" => "Reddedildi" }.fetch(@agent_request.approval_document.status) %></strong></p>
+  <%= link_to "Belgeyi ve yönetici kararını göster", @agent_request.approval_document, class: "button primary-button" %></section>
+<% elsif @agent_request.handoff? %>
+  <section class="panel agent-request-card" role="status"><h2>İnsan incelemesine devredildi</h2><p>Seçilen yönetici konuşmayı inceleyip açıklama isteyebilir. Henüz onaya gönderilmiş bir belge yok.</p></section>
+<% end %>
+<section class="panel agent-conversation" aria-label="Konuşma geçmişi">
+  <% @agent_request.messages.each do |message| %>
+    <article class="agent-message agent-message-<%= message.fetch('role') %>">
+      <strong><%= { "user" => "Çalışan", "assistant" => "Agent", "human" => "Yönetici · insan devri" }.fetch(message.fetch("role")) %></strong>
+      <%= simple_format(message.fetch("content")) %>
+    </article>
+  <% end %>
+</section>
+<% if current_user.employee? && @agent_request.collecting? %>
+  <section class="panel agent-request-card"><%= form_with url: message_agent_request_path(@agent_request), class: "stacked-form" do |form| %>
+    <div class="form-group"><%= form.label :message, "Yanıtınız" %><%= form.text_area :message, required: true, maxlength: 4000, rows: 4 %></div>
+    <%= form.submit "Agent'a gönder", class: "button primary-button", data: { turbo_submits_with: "Agent değerlendiriyor…" } %>
+  <% end %></section>
+<% elsif current_user.manager? && @agent_request.handoff? %>
+  <section class="panel agent-request-card"><h2>İnsan olarak devral</h2><%= form_with url: resume_agent_request_path(@agent_request), class: "stacked-form" do |form| %>
+    <div class="form-group"><%= form.label :note, "Çalışana açıklama veya bilgi isteği" %><%= form.text_area :note, required: true, maxlength: 4000, rows: 4 %></div>
+    <%= form.submit "Çalışana geri ilet", class: "button primary-button" %>
+  <% end %></section>
+<% end %>
+<p class="field-hint">Onay süresi uygulama tarafından 48 saat olarak hesaplanır. Agent önerisi yönetici kararı değildir. <%= @agent_request.llm_model.present? ? "Son değerlendirme modeli: #{@agent_request.llm_model}" : "Henüz başarılı LLM değerlendirmesi yok." %></p>

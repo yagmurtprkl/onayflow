@@ -1,0 +1,15 @@
+<% content_for :title, "Agent talepleri | OnayFlow" %>
+<header class="page-header"><div><span class="eyebrow">Agent ve insan birlikte</span><h1>Agent talepleri</h1><p>Konuşmalar, insana devredilen talepler ve onay sonuçları.</p></div>
+<% if current_user.employee? %><%= link_to "Yeni agent talebi", new_agent_request_path, class: "button primary-button" %><% end %></header>
+<div class="agent-request-list">
+<% @agent_requests.each do |request| %>
+  <article class="panel agent-request-card">
+    <h2><%= link_to "Talep ##{request.id}", request %></h2>
+    <p><%= request.requester.name %> → <%= request.approver.name %></p>
+    <strong><%= { "collecting" => "Bilgi toplanıyor", "handoff" => "İnsan incelemesi gerekli", "submitted" => "Onaya gönderildi" }.fetch(request.state) %></strong>
+    <p><%= truncate(request.messages.first&.fetch("content", ""), length: 160) %></p>
+    <% if request.approval_document %><%= link_to "Belge ve karar durumu", request.approval_document %><% end %>
+  </article>
+<% end %>
+<% if @agent_requests.empty? %><section class="panel agent-request-card"><p>Henüz agent talebi yok.</p></section><% end %>
+</div>

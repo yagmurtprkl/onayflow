@@ -2243,3 +2243,12 @@ textarea {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Agent requests reuse the existing workspace palette and form controls. */
+.agent-request-list { display: grid; gap: 1rem; }
+.agent-request-card, .agent-conversation { padding: 1.5rem; margin-bottom: 1.25rem; }
+.agent-conversation { display: grid; gap: 1rem; }
+.agent-message { padding: 1rem 1.25rem; border: 1px solid #dbe4ec; border-radius: 12px; overflow-wrap: anywhere; }
+.agent-message p { white-space: pre-wrap; }
+.agent-message-assistant { background: #f0f7ff; }
+.agent-message-human { background: #fff7e6; border-color: #eed49a; }

@@ -350,3 +350,20 @@ Tüm dış kaynaklar 18 Ekim 2026 tarihinde kontrol edilmiştir:
 CI tam Brakeman taramasını çalıştırır. Rails yaşam döngüsü kontrolü ayrı raporlanır;
 Rails 8.0 desteği 7 Kasım 2026'da sona ereceğinden bu tarihten önce desteklenen
 bir Rails sürümüne yükseltme planlanmalıdır.
+
+
+## İkinci aşama — Agent ile satın alma talebi
+
+Yeni **Agent talepleri** ekranında çalışan doğal dille satın alma talebi başlatır.
+Groq LLM eksik bilgileri sorar; tamamlanınca agent mevcut model kurallarıyla
+belge oluşturup atanmış yöneticiye gönderir. Son karar insandadır. Çelişki,
+insan talebi veya servis hatası yöneticinin devralabildiği bir konuşma oluşturur.
+Onay/ret durumu konuşma ekranında doğrudan veritabanından gösterilir.
+
+Gerekli secret: `GROQ_API_KEY`. İsteğe bağlı: `GROQ_MODEL` (varsayılan
+`llama-3.3-70b-versatile`). Anahtar yoksa LLM başarılıymış gibi gösterilmez;
+talep insan incelemesine devredilir. Gerçek sağlayıcı/canlı demo henüz yapılmamıştır.
+
+- [İkinci aşama günlüğü](CHALLENGE_LOG.md)
+- [Kurulum ve sunum senaryosu](docs/STAGE2_DEMO.md)
+- [Coding agent kuralları](AGENTS.md)
