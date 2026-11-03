@@ -29,7 +29,7 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "bootsnap", require: false
 
 # Rails 8.0 cookie serialization is not compatible with JSON 3 keyword handling.
-gem "json", "< 3.0"
+gem "json", "< 4.0"
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
